@@ -1,24 +1,19 @@
 const express = require('express');
-
+const bodyParser = require('body-parser');
 // Create an Express application
 const app = express();
 
+app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+)
+
 // Define a route handler for the root path
 app.get('/', (req, res) => {
-  res.send('Hello, World!');
+  res.json({ info: 'Node.js, Express, and Postgres API' });
 });
-
-// Define a route handler for a custom path
-app.get('/greeting', (req, res) => {
-  res.send('Greetings from Express!');
-});
-
-// Define a route handler for a dynamic path parameter
-app.get('/hello/:name', (req, res) => {
-  const name = req.params.name;
-  res.send(`Hello, ${name}!`);
-});
-
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
