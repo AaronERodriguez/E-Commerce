@@ -116,3 +116,8 @@ exports.changePassword = async (req, res, next) => {
       next(error); // Pass error to error handling middleware
     }
 };
+
+exports.logoutUser = (req, res) => {
+  req.logout();
+  res.redirect('/login');
+}

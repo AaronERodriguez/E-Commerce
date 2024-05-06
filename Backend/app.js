@@ -2,6 +2,8 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const passport = require('passport'); // Passport module
+const usersRouter = require('./routes/users'); //Users Routes
+
 // Create an Express application
 const app = express();
 
@@ -26,6 +28,9 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session())
+
+//Mount the users routes
+app.use('/users', usersRouter);
 
 // Define a route handler for the root path
 app.get('/', (req, res) => {
