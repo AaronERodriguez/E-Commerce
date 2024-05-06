@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./Backend/app.js",
+    "test": "mocha ./tests/userRoutes.test.js"
   },
   "keywords": [],
   "author": "",
@@ -14,9 +15,16 @@
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.3.3",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
-    "pg": "^8.11.5"
+    "pg": "^8.11.5",
+    "request": "^2.88.2",
+    "save-dev": "^0.0.1-security"
+  },
+  "devDependencies": {
+    "chai": "^5.1.0",
+    "mocha": "^10.4.0",
+    "phantomjs-prebuilt": "^2.1.16",
+    "supertest": "^7.0.0"
   }
 }

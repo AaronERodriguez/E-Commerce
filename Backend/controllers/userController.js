@@ -14,7 +14,7 @@ exports.registerUser = async (req, res, next) => {
         }
         
         const saltRounds = 12;
-        const salt = await bycript.genSalt(saltRounds);
+        const salt = await bcrypt.genSalt(saltRounds);
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, salt);

@@ -34,10 +34,20 @@ app.use('/users', usersRouter);
 
 // Define a route handler for the root path
 app.get('/', (req, res) => {
-  res.json({ info: 'Node.js, Express, and Postgres API' });
+  res.status(200).json({ info: 'Node.js, Express, and Postgres API' });
 });
+
+//Error-Handling middleware
+const errorHandler = (err, req, res, next) => {
+  const status = err.status || 500;
+  res.status(status).send(err.message);
+}
+app.use(errorHandler);
+
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+module.exports = app;
