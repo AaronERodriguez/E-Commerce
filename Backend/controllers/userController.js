@@ -31,22 +31,6 @@ exports.registerUser = async (req, res, next) => {
     }
 }
 
-// Function to login a user
-exports.loginUser = (req, res, next) => {
-    passport.authenticate('local', (err, user, info) => {
-        if (err) {
-            return next(err);
-        } if (!user) {
-            return res.status(400).json({error: info.message});
-        }
-        req.login(user, (err) =>{
-            if(err) {
-                return next(err);
-            }
-            return res.status(200).json({message: 'Login successful'});
-        });
-    })(req, res, next);
-}
 
 exports.getUserProfile = async (req, res, next) => {
     try {

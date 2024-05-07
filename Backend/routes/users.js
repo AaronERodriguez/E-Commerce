@@ -9,7 +9,10 @@ const userController = require('../controllers/userController');
 router.post('/register', userController.registerUser);
 
 // Route for user login (POST)
-router.post('/login', userController.loginUser);
+router.post('/login', passport.authenticate('local', {failureMessage: 'User not Found!'}),(req, res) => {
+  console.log('user found')
+  res.send(req.user);
+});
 
 // Route for user profile
 router.get('/profile', ensureAuthenticated, userController.getUserProfile);

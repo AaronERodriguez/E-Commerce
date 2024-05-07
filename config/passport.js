@@ -19,7 +19,6 @@ passport.use(new LocalStrategy({
         if (!validPassword) {
             return done(null, false, {message: 'Invalid email or password'});
         }
-
         //Return user object to be used
         return done(null, user.rows[0]);
     } catch (error) {
