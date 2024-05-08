@@ -101,7 +101,9 @@ exports.changePassword = async (req, res, next) => {
     }
 };
 
-exports.logoutUser = (req, res) => {
-  req.logout();
-  res.redirect('/login');
+exports.logoutUser = (req, res, next) => {
+  req.logout((err) => {
+    if (err) {return next(err)}
+    res.status(200).json({message: 'Successfully logged out!'})
+  });
 }

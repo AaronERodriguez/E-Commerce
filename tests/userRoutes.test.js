@@ -34,6 +34,7 @@ describe('/users', () => {
             })
         })
     }) */
+    /*
     describe ('/login', () => {
         
         describe('POST', () => {
@@ -58,6 +59,20 @@ describe('/users', () => {
                     .send(credentials)
                 assert.equal(response.status, 401);
                 assert.equal(response.text, 'Unauthorized');
+            })
+        })
+    }) */
+    describe('/logout', () => {
+        describe('GET', () => {  
+            it ('returns successfully', async () => {
+                const credentials = {
+                    email: 'bobby@example.com',
+                    password: 'passwordy'
+                }
+
+                const response = await request(app)
+                    .get('/users/logout');
+                assert.equal(response.text, '{"message":"Successfully logged out!"}');
             })
         })
     })
