@@ -1,5 +1,7 @@
 const assert = require('assert');
 const request = require('supertest');
+const superagent = require('superagent');
+const agent = superagent.agent();
 
 const app = require('../Backend/app');
 
@@ -65,15 +67,40 @@ describe('/users', () => {
     describe('/logout', () => {
         describe('GET', () => {  
             it ('returns successfully', async () => {
-                const credentials = {
-                    email: 'bobby@example.com',
-                    password: 'passwordy'
-                }
-
                 const response = await request(app)
                     .get('/users/logout');
                 assert.equal(response.text, '{"message":"Successfully logged out!"}');
             })
+        })
+    })
+    describe('/profile', () => {
+        describe('GET', () => {
+
+            before(done => {
+                const credentials = {
+                    email: 'bobby@example.com',
+                    password: 'passwordy' 
+                }
+                agent.post('http://localhost:3000/users/login').send(credentials)
+                .end((err, res) => {
+                    console.log(res.statusCode);
+                    if (res.statusCode == 200) {
+                        console.log(res.text);
+                        return done();
+                    }
+                    else {
+                        return done(new Error("The login is not happening"));
+                    }
+                }) 
+            })
+
+            it('returns the credentials', (done) => {
+                agent.get('http://localhost:3000/users/profile').end((err, res) => {
+                    console.log(res.text);
+                    done();
+                })
+            })
+
         })
     })
 })

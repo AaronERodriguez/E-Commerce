@@ -19,7 +19,8 @@
     "passport-local": "^1.0.0",
     "pg": "^8.11.5",
     "request": "^2.88.2",
-    "save-dev": "^0.0.1-security"
+    "save-dev": "^0.0.1-security",
+    "superagent": "^9.0.2"
   },
   "devDependencies": {
     "chai": "^5.1.0",

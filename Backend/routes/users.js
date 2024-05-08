@@ -28,10 +28,11 @@ router.put('/password', ensureAuthenticated, userController.changePassword);
 
 // Middleware to ensure user is authenticated
 function ensureAuthenticated(req, res, next) {
+  console.log(req.user);
   if (req.isAuthenticated()) {
     return next(); // If authenticated, continue to the next middleware
   }
-  res.redirect('/login'); // If not authenticated, redirect to login page
+  res.json({message: 'Not authenticated'}); // If not authenticated, redirect to login page
 }
 
 module.exports = router;
