@@ -3,6 +3,29 @@ const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 const pool = require('../Backend/database');
 
+//Serialize the User object into session
+passport.serializeUser((user, done) => {
+    console.log('In serializeUser');
+    done(null, user.user_id); //Asume the user ID is the PK
+})
+
+// Deserialize user object from session
+passport.deserializeUser(async (userId, done) => {
+    console.log('Inside deserialize', userId);
+    try {
+        //Fetch user form database using user ID
+        const user = await pool.query('SELECT * FROM users WHERE user_id = $1', [userId]);
+        if (user.rows.length === 0) {
+            return done(new Error('User not found'));
+        }
+        //Return user object
+        console.log(user.rows[0])
+        return done(null, user.rows[0]);
+    } catch (error) {
+        return done(error);
+    }
+})
+
 passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'
@@ -27,25 +50,5 @@ passport.use(new LocalStrategy({
     }
 }));
 
-//Serialize the User object into session
-passport.serializeUser((user, done) => {
-    done(null, user.user_id); //Asume the user ID is the PK
-})
-
-// Deserialize user object from session
-passport.deserializeUser(async (userId, done) => {
-    try {
-        //Fetch user form database using user ID
-        const user = await pool.query('SELECT * FROM users WHERE user_id = $1', [userId]);
-        if (user.rows.length === 0) {
-            return done(new Error('User not found'));
-        }
-
-        //Return user object
-        return done(null, user.rows[0]);
-    } catch (error) {
-        return done(error);
-    }
-})
 
 module.exports = passport;

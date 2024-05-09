@@ -20,7 +20,7 @@ const store = new session.MemoryStore();
 
 app.use(session({
   secret: 'myKey',
-  cookie: {maxAge: 172800000, secure: true, sameSite: 'none'},
+  cookie: {maxAge: 172800000, sameSite: 'none'},
   resave: false,
   saveUninitialized: false,
   store

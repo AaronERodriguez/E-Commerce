@@ -1,7 +1,5 @@
 const assert = require('assert');
 const request = require('supertest');
-const superagent = require('superagent');
-const agent = superagent.agent();
 
 const app = require('../Backend/app');
 
@@ -36,7 +34,7 @@ describe('/users', () => {
             })
         })
     }) */
-    /*
+    
     describe ('/login', () => {
         
         describe('POST', () => {
@@ -49,7 +47,7 @@ describe('/users', () => {
                     .post('/users/login')
                     .send(credentials)
                 assert.equal(response.status, 200);
-                assert.equal(response.text, '{"user_id":3,"username":"Bobby","email":"bobby@example.com","password":"$2b$12$q.Y5H5XTjGoL5dd1b8SI.eKTwN5DXZoCu9i480Smgkzs2ecTrwnWK","billing_address":"Idk where","phone_number":"1000-0000"}');
+                assert.equal(JSON.parse(response.text).message, "Login successful");
             })
             it('returns "Unauthorized" on error', async () => {
                 const credentials = {
@@ -63,7 +61,7 @@ describe('/users', () => {
                 assert.equal(response.text, 'Unauthorized');
             })
         })
-    }) */
+    }) 
     describe('/logout', () => {
         describe('GET', () => {  
             it ('returns successfully', async () => {
@@ -71,36 +69,6 @@ describe('/users', () => {
                     .get('/users/logout');
                 assert.equal(response.text, '{"message":"Successfully logged out!"}');
             })
-        })
-    })
-    describe('/profile', () => {
-        describe('GET', () => {
-
-            before(done => {
-                const credentials = {
-                    email: 'bobby@example.com',
-                    password: 'passwordy' 
-                }
-                agent.post('http://localhost:3000/users/login').send(credentials)
-                .end((err, res) => {
-                    console.log(res.statusCode);
-                    if (res.statusCode == 200) {
-                        console.log(res.text);
-                        return done();
-                    }
-                    else {
-                        return done(new Error("The login is not happening"));
-                    }
-                }) 
-            })
-
-            it('returns the credentials', (done) => {
-                agent.get('http://localhost:3000/users/profile').end((err, res) => {
-                    console.log(res.text);
-                    done();
-                })
-            })
-
         })
     })
 })
