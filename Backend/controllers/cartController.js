@@ -27,21 +27,37 @@ exports.addItemToCart = async (req, res, next) => {
   // Get the data from the request body
   try {
     const userID = req.user.user_id;
-    const cart_id = await pool.query('SELECT cart_id FROM Cart WHERE user_id = $1', [userID]);
+    const cart_id = (await pool.query('SELECT cart_id FROM Cart WHERE user_id = $1', [userID])).rows[0].cart_id;
     if (!cart_id) {
       throw new Error("No cart created yet for the user!");
     }
     const {product_id, quantity} = req.body;
+    //Getting the price of the product
+    const unitPrice = (await pool.query('SELECT price FROM Products WHERE product_id = $1', [product_id])).rows[0].price;
+    
+    //Get the quantity from the wished product
+    const quantity_in_stock = (await pool.query('SELECT quantity_in_stock FROM Products WHERE product_id = $1', [product_id])).rows[0].quantity_in_stock;
+
+    //Check if there is enough stock to continue with the cart:
+    if (quantity_in_stock < quantity) {
+      throw new Error("There is not enough stock to add to the cart");
+    }
+    //Updating quantity
+    const newProductQuantity = quantity_in_stock - quantity;
+    await pool.query('UPDATE Products SET quantity_in_stock = $1 WHERE product_id = $2', [newProductQuantity, product_id]);
+
+    //Check if already in cart
     const existingCartItem = await pool.query('SELECT * FROM Cart_Items WHERE cart_id = $1 AND product_id = $2', [cart_id, product_id]);
     if (existingCartItem.rows.length > 0) {
       //If cart Item exists, add quantities together
       const updatedQuantity = existingCartItem.rows[0].quantity + quantity;
-      await pool.query('UPDATE Cart_Items SET quantity = $1 WHERE cart_id = $2', [updatedQuantity, cart_id]);
+      const updatedPrice = (updatedQuantity * unitPrice);
+      await pool.query('UPDATE Cart_Items SET quantity = $1, price = $2 WHERE cart_id = $3', [updatedQuantity, updatedPrice, cart_id]);
       res.status(200).send('Added the quantity to the cart!'); 
     } else {
       // If no matching items are found, create
-      const price = await pool.query('SELECT price FROM Products WHERE product_id = $1', [product_id]);
-      await pool.query('INSERT INTO Cart_Items (cart_id, product_id, quantity, price) VALUES($1, $2, $3, $4)', [cart_id, product_id, quantity, price]);
+      const updatedPrice = quantity * unitPrice;
+      await pool.query('INSERT INTO Cart_Items (cart_id, product_id, quantity, price) VALUES($1, $2, $3, $4)', [cart_id, product_id, quantity, updatedPrice]);
       res.status(200).send(`Added product with id = ${product_id} into cart with id = ${cart_id}`);
     }
   } catch (e) {

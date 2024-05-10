@@ -4,7 +4,8 @@ const passport = require('passport');
 const cartController = require('../controllers/cartController'); 
 
 router.post('/create', ensureAuthenticated, cartController.createCart);
-router.put('/update', ensureAuthenticated, cartController.addItemToCart);
+router.put('/add', ensureAuthenticated, cartController.addItemToCart);
+router.put('/remove', ensureAuthenticated, cartController.removeItemFromCart);
 router.get('/view', ensureAuthenticated, cartController.viewCart);
 
 // Middleware to ensure user is authenticated
