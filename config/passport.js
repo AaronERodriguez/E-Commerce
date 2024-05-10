@@ -5,13 +5,11 @@ const pool = require('../Backend/database');
 
 //Serialize the User object into session
 passport.serializeUser((user, done) => {
-    console.log('In serializeUser');
     done(null, user.user_id); //Asume the user ID is the PK
 })
 
 // Deserialize user object from session
 passport.deserializeUser(async (userId, done) => {
-    console.log('Inside deserialize', userId);
     try {
         //Fetch user form database using user ID
         const user = await pool.query('SELECT * FROM users WHERE user_id = $1', [userId]);
@@ -19,7 +17,6 @@ passport.deserializeUser(async (userId, done) => {
             return done(new Error('User not found'));
         }
         //Return user object
-        console.log(user.rows[0])
         return done(null, user.rows[0]);
     } catch (error) {
         return done(error);
