@@ -40,7 +40,6 @@ passport.use(new LocalStrategy({
             return done(null, false, {message: 'Invalid email or password'});
         }
         //Return user object to be used
-        console.log(user.rows[0])
         return done(null, user.rows[0]);
     } catch (error) {
         return done(error);

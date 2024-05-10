@@ -1,6 +1,6 @@
 const pool = require('../database');
 
-
+//Create a cart for the user: Working
 exports.createCart = async (req, res, next) => {
   try {
     const userID = req.user.user_id;
@@ -22,7 +22,7 @@ exports.createCart = async (req, res, next) => {
   }
 }
 
-// Function to add item to cart
+// Function to add item to cart: Working
 exports.addItemToCart = async (req, res, next) => {
   // Get the data from the request body
   try {
@@ -65,13 +65,33 @@ exports.addItemToCart = async (req, res, next) => {
   }
 };
 
-// Function to remove item from cart
-exports.removeItemFromCart = async (req, res) => {
+// Function to remove item from cart: Developing
+exports.removeItemFromCart = async (req, res, next) => {
   // Logic to remove item from cart
   try {
+    //Getting Cart and User
     const userID = req.user.user_id;
     const {cart_item_id} = req.body;
-    const result = await pool.query('DELETE FROM Cart_Items WHERE cart_item_id = $1', [cart_item_id]);
+
+    //Getting the cart_item
+    const cartItem = (await pool.query('SELECT * FROM Cart_Items WHERE cart_item_id = $1', [cart_item_id])).rows[0];
+    console.log(cartItem)
+
+    //Make sure the the User can actually delete this cartItem
+    const cart_id = (await pool.query('SELECT cart_id FROM Cart WHERE user_id = $1', [userID])).rows[0].cart_id;
+    if (cartItem.cart_id !== cart_id) {
+      throw new Error('This cart item does not belong to you!')
+    }
+
+    //Getting the quantity that will be removed
+    const quantityRemoved = cartItem.quantity;
+    const quantityInStock = (await pool.query('SELECT quantity_in_stock FROM Products WHERE product_id = $1', [cartItem.product_id])).rows[0].quantity_in_stock;
+    const quantityToBeAdded = quantityInStock + quantityRemoved;
+
+    //Delete item from cart
+    await pool.query('DELETE FROM Cart_Items WHERE cart_item_id = $1', [cart_item_id]);
+    //Add quantity back to the Products Table
+    await pool.query('UPDATE Products SET quantity_in_stock = $1 WHERE product_id = $2', [quantityToBeAdded, cartItem.product_id]);
     res.status(200).send('Item deleted!');
   } catch (error) {
     next(error);
