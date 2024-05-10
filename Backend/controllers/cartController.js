@@ -28,6 +28,8 @@ exports.addItemToCart = async (req, res, next) => {
   try {
     const userID = req.user.user_id;
     const cart_id = (await pool.query('SELECT cart_id FROM Cart WHERE user_id = $1', [userID])).rows[0].cart_id;
+    
+    //Check if Cart exists for the user
     if (!cart_id) {
       throw new Error("No cart created yet for the user!");
     }
@@ -65,7 +67,7 @@ exports.addItemToCart = async (req, res, next) => {
   }
 };
 
-// Function to remove item from cart: Developing
+// Function to remove item from cart: Working
 exports.removeItemFromCart = async (req, res, next) => {
   // Logic to remove item from cart
   try {
@@ -97,13 +99,26 @@ exports.removeItemFromCart = async (req, res, next) => {
     next(error);
   }
 };
-// Function to view cart contents
+// Function to view cart contents: Developing
 exports.viewCart = async (req, res, next) => {
   // Logic to view cart contents
   try {
+    //Getting the cart of the user
     const userID = req.user.user_id;
-    const result = await pool.query('SELECT * FROM Cart WHERE user_id = $1', [userID]);
-    res.stauts(200).send(result);
+    const userCart = await pool.query('SELECT * FROM Cart WHERE user_id = $1', [userID]);
+
+    //Check if cart exists
+    if (userCart.rows.length === 0) {
+      throw new Error("Cart for the user doesn't exist");
+    }
+    
+    //Get the cart_id
+    const cart_id = userCart.rows[0].cart_id;
+
+    //Getting the cart Array
+    const resultingCart = (await pool.query('SELECT * FROM Cart_Items WHERE cart_id = $1', [cart_id])).rows;
+
+    res.status(200).send(resultingCart);
   } catch (e) {
     next(e);
   }
