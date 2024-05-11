@@ -27,9 +27,10 @@ router.put('/profile', ensureAuthenticated, userController.updateUserProfile);
 //Route to change password
 router.put('/password', ensureAuthenticated, userController.changePassword);
 
+router.put('/role/:user_id', ensureAuthenticated, userController.changeRole);
+
 // Middleware to ensure user is authenticated
 function ensureAuthenticated(req, res, next) {
-  console.log(req.user);
   if (req.isAuthenticated()) {
     return next(); // If authenticated, continue to the next middleware
   }

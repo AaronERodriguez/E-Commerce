@@ -21,7 +21,7 @@ exports.registerUser = async (req, res, next) => {
 
         //Insert new user into database
         await pool.query(
-            'INSERT INTO users (username, email, password, billing_address, phone_number) VALUES ($1, $2, $3, $4, $5)',
+            'INSERT INTO users (username, email, password, billing_address, phone_number, role) VALUES ($1, $2, $3, $4, $5, "user")',
             [username, email, hashedPassword, billing_address, phone_number]
         );
 
@@ -55,11 +55,11 @@ exports.updateUserProfile = async (req, res, next) => {
       if (!req.isAuthenticated()) {
         return res.status(401).json({ error: 'Unauthorized' });
       }
-      const { username, email, billing_address, phone_number } = req.body;
+      const { username, email, billing_address, phone_number} = req.body;
   
       // Update user profile in database
       await pool.query(
-        'UPDATE users SET username = $1, email = $2, billing_address = $3, phone_number = $4 WHERE user_id = $5',
+        'UPDATE Users SET username = $1, email = $2, billing_address = $3, phone_number = $4 WHERE user_id = $5',
         [username, email, billing_address, phone_number, req.user.user_id]
       );
   
@@ -68,7 +68,36 @@ exports.updateUserProfile = async (req, res, next) => {
       next(error); // Pass error to error handling middleware
     }
 };
-  
+
+exports.changeRole = async (req, res, next) => {
+  try {
+    //Check if current user is an Admin!
+    if (req.user.role !== 'admin') {
+      return res.status(401).json({ error: 'Not an admin!' });
+    }
+    const userId = req.params.user_id;
+    const {newRole} = req.body;
+
+    //Check if user exists
+    const user = await pool.query('SELECT * FROM Users WHERE user_id = $1', [userId]);
+    if (user.rows.length === 0) {
+      return res.status(400).json({error: "User doesn't exists"});
+    }
+
+    //Make sure the role is different
+    if (user.rows[0].role === newRole) {
+      return res.status(409).json({error: "User is already this role!"});
+    }
+
+    //Change the role
+    await pool.query('UPDATE Users SET role = $1 WHERE user_id = $2', [newRole, userId]);
+
+    res.sendStatus(200);
+  } catch (error) {
+    next(error);
+  }
+}
+
   // Function to change user password
 exports.changePassword = async (req, res, next) => {
     try {
@@ -90,7 +119,9 @@ exports.changePassword = async (req, res, next) => {
       }
   
       // Hash new password
-      const hashedPassword = await bcrypt.hash(newPassword, 10); // Using 10 rounds for salt
+      const saltRounds = 12;
+      const salt = await bcrypt.genSalt(saltRounds);
+      const hashedPassword = await bcrypt.hash(newPassword, salt); // Using 10 rounds for salt
   
       // Update user password in database
       await pool.query('UPDATE users SET password = $1 WHERE user_id = $2', [hashedPassword, req.user.user_id]);
