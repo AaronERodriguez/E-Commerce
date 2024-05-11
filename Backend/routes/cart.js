@@ -14,6 +14,6 @@ function ensureAuthenticated(req, res, next) {
       return next(); // If authenticated, continue to the next middleware
     }
     res.json({message: 'Not authenticated'}); // If not authenticated, redirect to login page
-  }
+}
 
 module.exports = router;
