@@ -6,6 +6,7 @@ const productsController = require('../controllers/productsController');
 //Path for creating product:
 router.post('/create', ensureAuthenticated, productsController.createProduct);
 router.put('/update/:product_id', ensureAuthenticated, productsController.updateProduct);
+router.delete('/delete/:product_id', ensureAuthenticated, productsController.deleteProduct);
 
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {

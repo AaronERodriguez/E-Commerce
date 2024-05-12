@@ -51,6 +51,53 @@ exports.updateProduct = async (req, res, next) => {
     }
 }
 
-exports.deleteProduct
+exports.deleteProduct = async (req, res, next) => {
+    try {
+        //Check if you are admin
+        if(req.user.role !== 'admin') {
+            return res.status(401).json({error: 'You are not an admin'})
+        }
 
-exports.viewProduct
+        //Getting product to update
+        const {product_id} = req.params;
+
+        //Fetch the data abou that product
+        const product = await pool.query('SELECT * FROM Products WHERE product_id = $1', [product_id]);
+        
+        //Check if product exists:
+        if (product.rows.length === 0) {
+            return res.status(404).json({error: "Product already doesn't exist"});
+        }
+
+        //Delete the actual product
+        await pool.query('DELETE FROM Products WHERE product_id = $1', [product_id]);
+        res.status(200).send(`Successfully deleted product with id = ${product_id}`);
+        
+    } catch (error) {
+        next(error);
+    }
+}
+
+exports.viewProduct = async (req, ers, next) => {
+    try{
+        //Getting product_id from params
+        const {product_id} = req.params;
+
+        //Get the product from DB
+        const product = await pool.query('SELECT * FROM Products WHERE product_id = $1', [product_id]);
+        
+        //Check if product exists:
+        if (product.rows.length === 0) {
+            return res.status(404).json({error: "Product doens't exist"});
+        }
+
+        //Remove the product id from the product object.
+        //This is because it isn't needed anymore
+        delete product.rows[0].product_id;
+        //Send back the response
+        res.status(200).send(product.rows[0]);
+
+    } catch(error) {
+        next(error);
+    }
+}
