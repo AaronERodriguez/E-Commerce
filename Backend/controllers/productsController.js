@@ -91,11 +91,15 @@ exports.viewProduct = async (req, res, next) => {
             return res.status(404).json({error: "Product doens't exist"});
         }
 
-        //Remove the product id from the product object.
-        //This is because it isn't needed anymore
-        delete product.rows[0].product_id;
-        //Send back the response
-        res.status(200).send(product.rows[0]);
+        //check if user exists or if a user is an admin
+        if (!req.user || req.user.role !== 'admin') {
+            //Otherwise, remove the product id from the product object.
+            delete product.rows[0].product_id;
+            //Send back the response
+            return res.status(200).send(product.rows[0]);
+        }
+        return res.status(200).send(product.rows[0]);
+
 
     } catch(error) {
         next(error);
