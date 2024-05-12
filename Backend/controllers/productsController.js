@@ -37,10 +37,15 @@ exports.updateProduct = async (req, res, next) => {
 
         //Check if product exists:
         if(product.rows.length === 0) {
-            return res.status(404).json({erro: "Produt doesn't exist"});
+            return res.status(404).json({error: "Product doesn't exist"});
         }
+
+        //Get body
+        const {name, description, price, quantity_in_stock, category_id, brand, images} = req.body;
+
         //Update the information of the product
-        
+        await pool.query('UPDATE Products SET name = $1, description = $2, price = $3, quantity_in_stock = $4, category_id = $5, brand = $6, images = $7 WHERE product_id = $8', [name, description, price, quantity_in_stock, category_id, brand, images, product_id]);
+        res.status(200).send(`Updated the product with id = ${product_id}`)
     } catch(e) {
         next(e);
     }
