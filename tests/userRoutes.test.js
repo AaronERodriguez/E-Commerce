@@ -10,8 +10,6 @@ jest.mock('../Backend/database', () => ({
 const {getUserProfile, updateUserProfile, changeRole, changePassword, logoutUser} = require('../Backend/controllers/userController');
 const { query } = require('express');
 
-
-
 //mock user request
 const adminUser = {
     user_id: 1,

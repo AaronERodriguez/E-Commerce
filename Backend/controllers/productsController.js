@@ -24,9 +24,23 @@ exports.createProduct = async (req, res, next) => {
 
 exports.updateProduct = async (req, res, next) => {
     try {
+        //Check if you are admin
         if(req.user.role !== 'admin') {
-
+            return res.status(401).json({error: 'You are not an admin'})
         }
+
+        //Getting product to update
+        const {product_id} = req.params;
+
+        //Fetching the data about that product
+        const product = await pool.query('SELECT * FROM Products WHERE product_id = $1', [product_id]);
+
+        //Check if product exists:
+        if(product.rows.length === 0) {
+            return res.status(404).json({erro: "Produt doesn't exist"});
+        }
+        //Update the information of the product
+        
     } catch(e) {
         next(e);
     }
