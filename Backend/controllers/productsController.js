@@ -78,7 +78,7 @@ exports.deleteProduct = async (req, res, next) => {
     }
 }
 
-exports.viewProduct = async (req, ers, next) => {
+exports.viewProduct = async (req, res, next) => {
     try{
         //Getting product_id from params
         const {product_id} = req.params;
