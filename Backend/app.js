@@ -6,6 +6,7 @@ const passport = require('passport'); // Passport module
 //Routers
 const usersRouter = require('./routes/users'); //Users Routes
 const cartRouter = require('./routes/cart'); //Cart Routes
+const productRouter = require('./routes/products');
 
 // Create an Express application
 const app = express();
@@ -35,6 +36,7 @@ app.use(passport.session())
 //Mount the users routes
 app.use('/users', usersRouter);
 app.use('/carts', cartRouter);
+app.use('/products', productRouter);
 
 // Define a route handler for the root path
 app.get('/', (req, res) => {

@@ -34,9 +34,6 @@ exports.registerUser = async (req, res, next) => {
 
 exports.getUserProfile = async (req, res, next) => {
     try {
-        if (!req.isAuthenticated()) {
-          return res.status(401).json({ error: 'Unauthorized' });
-        }
         // Fetch user profile from database
         const user = await pool.query('SELECT * FROM users WHERE user_id = $1', [req.user.user_id]);
         if (user.rows.length === 0) {
@@ -52,9 +49,6 @@ exports.getUserProfile = async (req, res, next) => {
 // Function to update user profile
 exports.updateUserProfile = async (req, res, next) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
       const { username, email, billing_address, phone_number} = req.body;
   
       // Update user profile in database
@@ -101,9 +95,6 @@ exports.changeRole = async (req, res, next) => {
   // Function to change user password
 exports.changePassword = async (req, res, next) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
       const { oldPassword, newPassword } = req.body;
   
       // Fetch user from database

@@ -22,7 +22,15 @@ exports.createProduct = async (req, res, next) => {
     }
 }
 
-exports.updateProduct
+exports.updateProduct = async (req, res, next) => {
+    try {
+        if(req.user.role !== 'admin') {
+
+        }
+    } catch(e) {
+        next(e);
+    }
+}
 
 exports.deleteProduct
 
