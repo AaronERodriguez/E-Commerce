@@ -146,3 +146,27 @@ exports.viewAllCategories = async (req, res, next) => {
         next(error);
     }
 }
+
+exports.createCategory = async (req,res,next) => {
+    try {
+        //Check if the user is an admin
+        if(req.user.role !== 'admin') {
+            return res.status(401).json({error: 'You are not an admin'});
+        }
+
+        const {name, description} = req.body;
+        //Check if category name already exists
+        const result = await pool.query('SELECT name FROM Categories WHERE name = $1', [name]);
+        if (result.rows.length > 0) {
+            return res.status(409).json({error: 'This category alread exists'});
+        }
+
+        //Creaet the category
+        await pool.query('INSERT INTO Categories (name, description) VALUES($1, $2)', [name, description]);
+        //Get id
+        const id = (await pool.query('SELECT category_id FROM Categories WHERE name = $1', [name])); 
+        res.status(200).send(`${name}, successfully added to the Database with id = ${id}!`);
+    } catch (error) {
+
+    }
+}

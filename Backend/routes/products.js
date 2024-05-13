@@ -13,10 +13,16 @@ router.delete('/delete/:product_id', ensureAuthenticated, productsController.del
 router.get('/view/:product_id', productsController.viewProduct);
 //Path to get all products
 router.get('/all', productsController.viewAllProducts);
+
+//Categories
+
+//Create a new category
+router.post('/categories/create', ensureAuthenticated, productsController.createCategory);
 //Path to get products based on category
-router.get('/categories/:category_id', productsController.viewProductsInCategory);
+router.get('/categories/view/:category_id', productsController.viewProductsInCategory);
 //Path to get all categories
-router.get('/categories', productsController.viewAllCategories);
+router.get('/categories/view', productsController.viewAllCategories);
+
 
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
