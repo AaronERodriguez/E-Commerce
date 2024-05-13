@@ -105,3 +105,14 @@ exports.viewProduct = async (req, res, next) => {
         next(error);
     }
 }
+
+exports.viewAllProducts = async (req, res, next) => {
+    try {
+        //Fetch all products
+        const products = await pool.query('SELECT * FROM Products ORDER BY product_id');
+        //Check if user exists or if a user is an admin
+        return res.status(200).send(products.rows);
+    } catch (error) {
+        next(error);
+    }
+}

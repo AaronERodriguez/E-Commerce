@@ -10,7 +10,9 @@ router.put('/update/:product_id', ensureAuthenticated, productsController.update
 //Path to delete a product based on its ID
 router.delete('/delete/:product_id', ensureAuthenticated, productsController.deleteProduct);
 //Path to get a product based on its ID
-router.get('/:product_id', productsController.viewProduct);
+router.get('/view/:product_id', productsController.viewProduct);
+//Path to get all products
+router.get('/all', productsController.viewAllProducts);
 
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
