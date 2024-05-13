@@ -18,6 +18,8 @@ router.get('/all', productsController.viewAllProducts);
 
 //Create a new category
 router.post('/categories/create', ensureAuthenticated, productsController.createCategory);
+//Delete a category
+router.delete('/categories/delete/:category_id', ensureAuthenticated, productsController.deleteCategory);
 //Path to get products based on category
 router.get('/categories/view/:category_id', productsController.viewProductsInCategory);
 //Path to get all categories

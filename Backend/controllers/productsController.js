@@ -146,7 +146,7 @@ exports.viewAllCategories = async (req, res, next) => {
         next(error);
     }
 }
-
+//Create a new category
 exports.createCategory = async (req,res,next) => {
     try {
         //Check if the user is an admin
@@ -167,6 +167,29 @@ exports.createCategory = async (req,res,next) => {
         const id = (await pool.query('SELECT category_id FROM Categories WHERE name = $1', [name])); 
         res.status(200).send(`${name}, successfully added to the Database with id = ${id}!`);
     } catch (error) {
+        next(error);
+    }
+}
 
+//Deelte a category
+exports.deleteCategory = async (req, res, next) => {
+    try {
+        //Check if the user is an admin
+        if (req.user.role !== 'admin') {
+            return res.status(401).json({error: "You are not an admin"});
+        }
+        //Get the id of category
+        const {category_id} = req.params;
+        //Check if it doesn't exists already
+        const result = await pool.query('SELECT * FROM Categories WHERE category_id = $1', [category_id]);
+        if (result.rows.length === 0) {
+            return res.status(409).json({error: "This category doesn't exist"});
+        }
+
+        //Create the category
+        await pool.query('DELETE FROM Categories WHERE category_id = $1', [category_id]);
+        res.status(200).send(`The category with id ${category_id} was deleted`);
+    } catch(error) {
+        next(error);
     }
 }
