@@ -1,5 +1,5 @@
 const pool = require('../database');
-
+//Create a new product
 exports.createProduct = async (req, res, next) => {
     try  {  //Check you are admin
         if(req.user.role !== 'admin') {
@@ -21,7 +21,7 @@ exports.createProduct = async (req, res, next) => {
         next(error);
     }
 }
-
+//Update product based on id
 exports.updateProduct = async (req, res, next) => {
     try {
         //Check if you are admin
@@ -50,7 +50,7 @@ exports.updateProduct = async (req, res, next) => {
         next(e);
     }
 }
-
+//Remove product based on id
 exports.deleteProduct = async (req, res, next) => {
     try {
         //Check if you are admin
@@ -77,7 +77,7 @@ exports.deleteProduct = async (req, res, next) => {
         next(error);
     }
 }
-
+//Viewing specific product based on ID
 exports.viewProduct = async (req, res, next) => {
     try{
         //Getting product_id from params
@@ -105,12 +105,31 @@ exports.viewProduct = async (req, res, next) => {
         next(error);
     }
 }
-
+//Finished
 exports.viewAllProducts = async (req, res, next) => {
     try {
         //Fetch all products
         const products = await pool.query('SELECT * FROM Products ORDER BY product_id');
-        //Check if user exists or if a user is an admin
+        //Return an array of each product object
+        return res.status(200).send(products.rows);
+    } catch (error) {
+        next(error);
+    }
+}
+//View based on category
+exports.viewProductsInCategory = async (req, res, next) => {
+    try {
+        //Get the category_id
+        const {category_id} = req.params;
+        
+        //Chcck if category_id is null
+        if (!category_id) { 
+            return res.status(422).json({error: "The category id isn't specified"});
+        }
+
+        //Fetch the products with the category
+        const products = await pool.query('SELECT * FROM Products WHERE category_id = $1', [category_id]);
+        //Return an array of the resulting products
         return res.status(200).send(products.rows);
     } catch (error) {
         next(error);

@@ -13,6 +13,8 @@ router.delete('/delete/:product_id', ensureAuthenticated, productsController.del
 router.get('/view/:product_id', productsController.viewProduct);
 //Path to get all products
 router.get('/all', productsController.viewAllProducts);
+//Path to get products based on category
+router.get('/categories/:category_id', productsController.viewProductsInCategory);
 
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
