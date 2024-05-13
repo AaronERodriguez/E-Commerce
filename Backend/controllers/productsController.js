@@ -135,3 +135,14 @@ exports.viewProductsInCategory = async (req, res, next) => {
         next(error);
     }
 }
+//View all categories in database
+exports.viewAllCategories = async (req, res, next) => {
+    try {
+        //Fetch all categories
+        const categories = await pool.query('SELECT * FROM Categories');
+        //Return an array of all categories
+        return res.status(200).send(categories.rows);
+    } catch(error) {
+        next(error);
+    }
+}

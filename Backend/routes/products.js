@@ -15,6 +15,8 @@ router.get('/view/:product_id', productsController.viewProduct);
 router.get('/all', productsController.viewAllProducts);
 //Path to get products based on category
 router.get('/categories/:category_id', productsController.viewProductsInCategory);
+//Path to get all categories
+router.get('/categories', productsController.viewAllCategories);
 
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
